@@ -31,6 +31,7 @@ import { Github, Zap, Command, Menu, X } from 'lucide-react';
       <a href="/price-history" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">趋势</a>
       <a href="/health" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">监控</a>
       <a href="/cardshops" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">卡网</a>
+      <a href="/report" class="text-sm text-blue-400 hover:text-blue-300 transition-colors hidden lg:inline">上报</a>
       <a href="/about" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">关于</a>
 
       <!-- Cmd+K hint -->
@@ -95,43 +96,43 @@ import { Github, Zap, Command, Menu, X } from 'lucide-react';
     <div class="flex-1 overflow-y-auto py-4 px-3">
       <div class="space-y-1">
         <a href="/" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           首页
         </a>
         <a href="/compare" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           对比
         </a>
         <a href="/calculator" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
           用量计算器
         </a>
         <a href="/best-price" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           最优价查找
         </a>
         <a href="/price-history" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           价格趋势
         </a>
         <a href="/favorites" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           我的收藏
         </a>
         <a href="/health" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           健康监控
         </a>
         <a href="/cardshops" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           卡网汇总
         </a>
         <a href="/report" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           上报中转站
         </a>
         <a href="/about" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           关于
         </a>
       </div>
@@ -142,15 +143,15 @@ import { Github, Zap, Command, Menu, X } from 'lucide-react';
       <!-- Social links -->
       <div class="space-y-1">
         <a href="https://qm.qq.com/cgi-bin/qm/qr?group_code=851377981" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.003 0c-3.314 0-6.003 2.687-6.003 6.003 0 .69.117 1.352.334 1.966-1.764.273-3.334 1.514-3.334 3.535 0 1.214.654 2.286 1.625 2.875-.237.537-.375 1.13-.375 1.755 0 2.416 1.969 4.374 4.391 4.374.555 0 1.083-.104 1.569-.292.517.832 1.438 1.387 2.493 1.387s1.976-.555 2.493-1.387c.486.188 1.014.292 1.569.292 2.422 0 4.391-1.958 4.391-4.374 0-.625-.138-1.218-.375-1.755.971-.589 1.625-1.661 1.625-2.875 0-2.021-1.57-3.262-3.334-3.535.217-.614.334-1.276.334-1.966C18.006 2.687 15.317 0 12.003 0z"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12.003 0c-3.314 0-6.003 2.687-6.003 6.003 0 .69.117 1.352.334 1.966-1.764.273-3.334 1.514-3.334 3.535 0 1.214.654 2.286 1.625 2.875-.237.537-.375 1.13-.375 1.755 0 2.416 1.969 4.374 4.391 4.374.555 0 1.083-.104 1.569-.292.517.832 1.438 1.387 2.493 1.387s1.976-.555 2.493-1.387c.486.188 1.014.292 1.569.292 2.422 0 4.391-1.958 4.391-4.374 0-.625-.138-1.218-.375-1.755.971-.589 1.625-1.661 1.625-2.875 0-2.021-1.57-3.262-3.334-3.535.217-.614.334-1.276.334-1.966C18.006 2.687 15.317 0 12.003 0z"/></svg>
           QQ 群
         </a>
         <a href="https://t.me/+nmwciPguEQMyNjhl" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.901-.903-1.056-.693-1.653-1.124-2.681-1.8-1.186-.781-.418-1.214.26-1.917.179-.186 3.352-3.071 3.414-3.335.008-.04.015-.188-.07-.265-.085-.077-.21-.05-.3-.031-.127.03-2.083 1.324-5.866 3.887-.556.382-1.059.568-1.51.558-.497-.011-1.454-.281-2.163-.511-.872-.283-1.563-.433-1.503-.915.031-.252.374-.51 1.029-.78 4.036-1.757 6.725-2.916 8.064-3.475 3.842-1.598 4.642-1.875 5.166-1.884z"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.901-.903-1.056-.693-1.653-1.124-2.681-1.8-1.186-.781-.418-1.214.26-1.917.179-.186 3.352-3.071 3.414-3.335.008-.04.015-.188-.07-.265-.085-.077-.21-.05-.3-.031-.127.03-2.083 1.324-5.866 3.887-.556.382-1.059.568-1.51.558-.497-.011-1.454-.281-2.163-.511-.872-.283-1.563-.433-1.503-.915.031-.252.374-.51 1.029-.78 4.036-1.757 6.725-2.916 8.064-3.475 3.842-1.598 4.642-1.875 5.166-1.884z"/></svg>
           Telegram
         </a>
         <a href="https://github.com/cnrpot/AI-Hub" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
-          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
           GitHub
         </a>
       </div>
@@ -162,10 +163,10 @@ import { Github, Zap, Command, Menu, X } from 'lucide-react';
   .mobile-nav-link {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.625rem 0.75rem;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: #94a3b8;
     transition: all 0.15s ease;
   }
