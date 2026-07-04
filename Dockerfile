@@ -29,6 +29,9 @@ COPY --from=builder /app/public ./public
 # Copy package.json (needed for Node.js ESM resolution)
 COPY --from=builder /app/package.json ./package.json
 
+# Copy server wrapper for diagnostics (from builder)
+COPY --from=builder /app/server-wrapper.mjs ./server-wrapper.mjs
+
 # Environment defaults
 ENV NODE_ENV=production
 ENV PORT=4321
@@ -36,4 +39,4 @@ ENV HOST=0.0.0.0
 
 EXPOSE 4321
 
-CMD ["node", "./dist/server/entry.mjs"]
+CMD ["node", "./server-wrapper.mjs"]
