@@ -1,0 +1,73 @@
+---
+import type { Station } from '../types/station';
+import { getPriceRange, formatPrice } from '../utils/stations';
+import { Star, ArrowRight, Check } from 'lucide-react';
+
+interface Props {
+  station: Station;
+}
+
+const { station } = Astro.props;
+const priceRange = getPriceRange(station);
+---
+
+<a
+  href={`/stations/${station.slug}`}
+  class="card-base card-hover group block relative"
+>
+  <!-- Compare checkbox -->
+  <div class="absolute top-4 right-4 z-10" data-compare-checkbox={station.slug}>
+    <label class="flex items-center gap-1.5 cursor-pointer text-xs text-slate-500 hover:text-slate-300 transition-colors">
+      <input
+        type="checkbox"
+        class="compare-checkbox w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-500 focus:ring-blue-500/20"
+        data-slug={station.slug}
+      />
+      <span>对比</span>
+    </label>
+  </div>
+
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-3 pr-16">
+    <div>
+      <h3 class="text-lg font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">
+        {station.name}
+      </h3>
+      <div class="flex items-center gap-2 mt-1">
+        <span class="badge-rating inline-flex items-center gap-1">
+          <Star className="w-3 h-3" fill="currentColor" />
+          {station.rating.toFixed(1)}
+        </span>
+        <span class="text-xs text-slate-500 font-mono">{station.models.length} 模型</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description -->
+  <p class="text-sm text-slate-400 line-clamp-2 mb-4">
+    {station.description}
+  </p>
+
+  <!-- Model tags -->
+  <div class="flex flex-wrap gap-1.5 mb-4">
+    {station.models.slice(0, 5).map((model) => (
+      <span class="badge-model">{model}</span>
+    ))}
+    {station.models.length > 5 && (
+      <span class="text-xs text-slate-500 self-center">+{station.models.length - 5}</span>
+    )}
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-between pt-3 border-t border-[#1e293b]">
+    <div class="flex flex-col">
+      <span class="text-xs text-slate-500">价格区间</span>
+      <span class="text-sm font-mono text-blue-400">
+        {formatPrice(priceRange.min)} ~ {formatPrice(priceRange.max)}
+      </span>
+    </div>
+    <span class="text-slate-500 group-hover:text-blue-400 transition-colors">
+      <ArrowRight className="w-5 h-5" />
+    </span>
+  </div>
+</a>

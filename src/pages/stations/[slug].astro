@@ -1,0 +1,164 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getStationBySlug } from '../../server/db';
+import { formatPrice, getPriceRange } from '../../utils/stations';
+import { Star, ExternalLink, ArrowLeft, BookOpen, CreditCard, Check } from 'lucide-react';
+
+const { slug } = Astro.params;
+const station = getStationBySlug(slug!);
+
+if (!station) {
+  return Astro.redirect('/404');
+}
+
+const priceRange = getPriceRange(station);
+---
+
+<Layout title={`${station.name} — AI Hub`} description={station.description}>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+      <a href="/" class="hover:text-slate-300 transition-colors">首页</a>
+      <span>/</span>
+      <span class="text-slate-300">{station.name}</span>
+    </nav>
+
+    <!-- Header card -->
+    <div class="card-base mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div class="flex-1">
+          <h1 class="text-2xl font-bold text-slate-100 mb-2">{station.name}</h1>
+          <p class="text-slate-400 mb-4">{station.description}</p>
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="badge-rating inline-flex items-center gap-1">
+              <Star className="w-3.5 h-3.5" fill="currentColor" />
+              {station.rating.toFixed(1)}
+            </span>
+            <span class="text-xs text-slate-500">
+              最后更新: <span class="font-mono text-slate-400">{station.updatedAt}</span>
+            </span>
+            <span class="text-xs text-slate-500">
+              支持模型: <span class="font-mono text-slate-400">{station.models.length}</span>
+            </span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 sm:items-end">
+          <a
+            href={station.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary"
+          >
+            <ExternalLink className="w-4 h-4" />
+            访问官网
+          </a>
+          {station.docUrl && (
+            <a
+              href={station.docUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-ghost"
+            >
+              <BookOpen className="w-4 h-4" />
+              接入文档
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Pricing table (main column) -->
+      <div class="lg:col-span-2">
+        <div class="card-base">
+          <h2 class="text-lg font-semibold text-slate-100 mb-4">模型定价</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left text-xs text-slate-500 uppercase tracking-wider border-b border-[#1e293b]">
+                  <th class="pb-3 font-medium">模型</th>
+                  <th class="pb-3 font-medium text-right">输入价格</th>
+                  <th class="pb-3 font-medium text-right">输出价格</th>
+                  <th class="pb-3 font-medium text-right">计费单位</th>
+                </tr>
+              </thead>
+              <tbody>
+                {station.models.map((model) => {
+                  const pricing = station.pricing[model];
+                  if (!pricing) return null;
+                  return (
+                    <tr class="border-b border-[#1e293b]/50 hover:bg-slate-800/30 transition-colors">
+                      <td class="py-3 text-sm">
+                        <span class="badge-model">{model}</span>
+                      </td>
+                      <td class="py-3 text-sm font-mono text-blue-400 text-right">
+                        ${pricing.input.toFixed(pricing.input < 0.01 ? 4 : 2)}
+                      </td>
+                      <td class="py-3 text-sm font-mono text-blue-400 text-right">
+                        ${pricing.output.toFixed(pricing.output < 0.01 ? 4 : 2)}
+                      </td>
+                      <td class="py-3 text-xs text-slate-500 text-right">{pricing.unit}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-4 pt-4 border-t border-[#1e293b] flex items-center justify-between text-sm">
+            <span class="text-slate-500">价格区间</span>
+            <span class="font-mono text-blue-400">
+              {formatPrice(priceRange.min)} ~ {formatPrice(priceRange.max)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Features -->
+        <div class="card-base">
+          <h2 class="text-sm font-semibold text-slate-100 mb-3">特性</h2>
+          <ul class="space-y-2">
+            {station.features.map((feature) => (
+              <li class="flex items-center gap-2 text-sm text-slate-400">
+                <Check className="w-4 h-4 text-emerald-400" />
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Payment methods -->
+        <div class="card-base">
+          <h2 class="text-sm font-semibold text-slate-100 mb-3 flex items-center gap-2">
+            <CreditCard className="w-4 h-4 text-slate-500" />
+            支付方式
+          </h2>
+          <div class="flex flex-wrap gap-2">
+            {station.paymentMethods.map((method) => (
+              <span class="badge-model">{method}</span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Model list -->
+        <div class="card-base">
+          <h2 class="text-sm font-semibold text-slate-100 mb-3">支持模型</h2>
+          <div class="flex flex-wrap gap-1.5">
+            {station.models.map((model) => (
+              <span class="badge-model">{model}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back link -->
+    <div class="mt-8">
+      <a href="/" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-100 transition-colors">
+        <ArrowLeft className="w-4 h-4" />
+        返回首页
+      </a>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,56 @@
+---
+import { Github, Zap, Command } from 'lucide-react';
+---
+
+<header class="sticky top-0 z-50 bg-base/80 backdrop-blur-md border-b border-[#1e293b]">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+        <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
+      </div>
+      <span class="text-lg font-bold text-slate-100">AI Hub</span>
+      <span class="hidden sm:inline text-xs text-slate-500 font-mono">中转站导航</span>
+    </a>
+
+    <div class="flex items-center gap-3 sm:gap-4">
+      <a href="/" class="text-sm text-slate-400 hover:text-slate-100 transition-colors">首页</a>
+      <a href="/compare" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden sm:inline">对比</a>
+      <a href="/calculator" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden sm:inline">计算器</a>
+      <a href="/best-price" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden sm:inline">最优价</a>
+      <a href="/price-history" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">趋势</a>
+      <a href="/health" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">监控</a>
+      <a href="/cardshops" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">卡网</a>
+      <a href="/about" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">关于</a>
+
+      <!-- Cmd+K hint -->
+      <button
+        id="cmd-k-trigger"
+        class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-slate-500 bg-slate-800/50 border border-slate-700 hover:border-slate-600 rounded-lg transition-colors cursor-pointer"
+        title="搜索 (Cmd/Ctrl+K)"
+      >
+        <Command className="w-3.5 h-3.5" />
+        <span class="font-mono">K</span>
+      </button>
+
+      <a
+        href="https://github.com/your-repo/ai-hub"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-ghost !px-3 !py-1.5"
+      >
+        <Github className="w-4 h-4" />
+        <span class="hidden sm:inline">GitHub</span>
+      </a>
+    </div>
+  </nav>
+</header>
+
+<script is:inline>
+  // Cmd+K trigger button click opens palette
+  const trigger = document.getElementById('cmd-k-trigger');
+  if (trigger) {
+    trigger.addEventListener('click', () => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
+    });
+  }
+</script>

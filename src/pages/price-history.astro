@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PriceHistoryChart from '../components/PriceHistoryChart';
+import { getAllStations } from '../server/db';
+import { TrendingUp } from 'lucide-react';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const stations = getAllStations();
+
+// Read price history if exists
+let history: any[] = [];
+const historyPath = path.join(process.cwd(), 'data', 'price-history.json');
+if (fs.existsSync(historyPath)) {
+  try {
+    const raw = fs.readFileSync(historyPath, 'utf-8');
+    const parsed = JSON.parse(raw);
+    history = Array.isArray(parsed) ? parsed : [];
+  } catch {
+    history = [];
+  }
+}
+---
+
+<Layout title="价格趋势 — AI Hub" description="查看 AI API 中转站各模型的价格历史变化趋势。">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/20 flex items-center justify-center">
+        <TrendingUp className="w-5 h-5 text-purple-400" />
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-100">价格历史趋势</h1>
+        <p class="text-sm text-slate-500">追踪各模型在不同中转站的价格变化</p>
+      </div>
+    </div>
+
+    <PriceHistoryChart client:load stations={stations} history={history} />
+  </div>
+</Layout>

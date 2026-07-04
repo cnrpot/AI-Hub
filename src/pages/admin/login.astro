@@ -1,0 +1,93 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { Lock, ShieldCheck } from 'lucide-react';
+---
+
+<Layout title="管理员登录 — AI Hub">
+  <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <div class="card-base p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
+            <ShieldCheck className="w-6 h-6 text-blue-400" />
+          </div>
+          <h1 class="text-xl font-bold text-slate-100">管理员登录</h1>
+          <p class="text-sm text-slate-500 mt-1">请输入管理密码以进入后台</p>
+        </div>
+
+        <!-- Login form -->
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label for="password" class="block text-sm font-medium text-slate-300 mb-2">
+              密码
+            </label>
+            <div class="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                autocomplete="current-password"
+                class="input-base w-full pl-10"
+                placeholder="••••••••"
+              />
+            </div>
+          </div>
+
+          <div
+            id="error-msg"
+            class="hidden text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2"
+          >
+          </div>
+
+          <button type="submit" class="btn-primary w-full justify-center" id="submit-btn">
+            登录
+          </button>
+        </form>
+      </div>
+
+      <p class="text-center text-xs text-slate-600 mt-4">
+        AI Hub 管理后台
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<script is:inline>
+  const form = document.getElementById('login-form');
+  const errorMsg = document.getElementById('error-msg');
+  const submitBtn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const password = document.getElementById('password').value;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '登录中...';
+    errorMsg.classList.add('hidden');
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+
+      if (res.ok) {
+        window.location.href = '/admin';
+      } else {
+        const data = await res.json().catch(() => ({}));
+        errorMsg.textContent = data.error || '登录失败，请检查密码';
+        errorMsg.classList.remove('hidden');
+      }
+    } catch (err) {
+      errorMsg.textContent = '网络错误，请稍后重试';
+      errorMsg.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '登录';
+    }
+  });
+</script>

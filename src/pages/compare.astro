@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CompareTable from '../components/CompareTable.tsx';
+import { getAllStations } from '../server/db';
+
+const allStations = getAllStations();
+---
+
+<Layout
+  title="对比中转站 — AI Hub"
+  description="并排对比多个 AI 中转站的价格、模型覆盖和特性，找到最优选择。"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold text-slate-100 mb-2">中转站对比</h1>
+    <p class="text-slate-400 text-sm mb-8">并排对比多个中转站的模型覆盖、定价和特性。</p>
+
+    <CompareTable client:load allStations={allStations} />
+  </div>
+</Layout>

@@ -1,0 +1,23 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[#1e293b] bg-base">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-sm text-slate-500">
+        <span class="font-semibold text-slate-400">AI Hub</span>
+        <span>·</span>
+        <span>开源 AI 中转站信息聚合平台</span>
+      </div>
+      <div class="flex items-center gap-4 text-sm text-slate-500">
+        <a href="/about" class="hover:text-slate-300 transition-colors">关于</a>
+        <a href="https://github.com/your-repo/ai-hub" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition-colors">GitHub</a>
+        <span>© {year}</span>
+      </div>
+    </div>
+    <p class="mt-4 text-xs text-slate-600 text-center sm:text-left">
+      本站信息由社区贡献维护，仅供参考。使用前请自行核实各中转站的实际服务和价格。
+    </p>
+  </div>
+</footer>

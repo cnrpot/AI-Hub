@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CostCalculator from '../components/CostCalculator';
+import { getAllStations } from '../server/db';
+import { Calculator } from 'lucide-react';
+
+const stations = getAllStations();
+---
+
+<Layout title="用量计算器 — AI Hub" description="输入模型和 Token 数量，计算各中转站的预估费用并对比。">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/20 flex items-center justify-center">
+        <Calculator className="w-5 h-5 text-blue-400" />
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-100">Token 用量计算器</h1>
+        <p class="text-sm text-slate-500">输入模型和 Token 数量，快速对比各中转站的预估费用</p>
+      </div>
+    </div>
+
+    <CostCalculator client:load stations={stations} />
+  </div>
+</Layout>

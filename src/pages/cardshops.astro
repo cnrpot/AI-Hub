@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CardShopExplorer from '../components/CardShopExplorer.tsx';
+import type { CardShop } from '../types/cardshop';
+import cardshopsData from '../../data/cardshops.json';
+
+const shops = cardshopsData as CardShop[];
+---
+
+<Layout
+  title="卡网汇总 — AI Hub"
+  description="AI 订阅卡网渠道聚合对比，汇聚 15+ 卡网渠道，展示有货最低价、库存状态和购买链接。"
+>
+  <div class="container-page py-8">
+    {/* Page Header */}
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-slate-100 mb-2">卡网汇总</h1>
+      <p class="text-slate-400">
+        聚合 AI 订阅卡网渠道，实时展示有货最低价、库存状态和购买链接。购买前先比价。
+      </p>
+    </div>
+
+    {/* Explorer */}
+    <CardShopExplorer client:load shops={shops} />
+  </div>
+</Layout>

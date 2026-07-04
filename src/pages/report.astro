@@ -1,0 +1,198 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Send, ArrowLeft } from 'lucide-react';
+---
+
+<Layout
+  title="上报中转站 — AI Hub"
+  description="提交新的 AI API 中转站信息，经管理员审核后收录到平台。"
+>
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Back link -->
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-100 transition-colors mb-6"
+    >
+      <ArrowLeft className="w-4 h-4" />
+      返回首页
+    </a>
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-slate-100 mb-2">上报中转站</h1>
+      <p class="text-slate-400 text-sm">
+        提交新的 AI API 中转站信息，经管理员审核后收录到平台。
+      </p>
+    </div>
+
+    <!-- Form card -->
+    <div class="card-base">
+      <form id="report-form" class="space-y-5">
+        <!-- Name -->
+        <div>
+          <label for="name" class="block text-sm font-medium text-slate-300 mb-1.5">
+            站名
+            <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            placeholder="例如：OpenAI Hub"
+            class="input-base w-full"
+          />
+        </div>
+
+        <!-- URL -->
+        <div>
+          <label for="url" class="block text-sm font-medium text-slate-300 mb-1.5">
+            官网 URL
+            <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="url"
+            id="url"
+            name="url"
+            required
+            placeholder="https://example.com"
+            class="input-base w-full"
+          />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="description" class="block text-sm font-medium text-slate-300 mb-1.5">
+            简介
+            <span class="text-red-400">*</span>
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            required
+            rows="3"
+            placeholder="简要描述该中转站的特点、优势等"
+            class="input-base w-full resize-none"></textarea>
+        </div>
+
+        <!-- Models -->
+        <div>
+          <label for="models" class="block text-sm font-medium text-slate-300 mb-1.5">
+            支持的模型
+            <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            id="models"
+            name="models"
+            required
+            placeholder="gpt-4o, claude-3.5-sonnet, gemini-pro"
+            class="input-base w-full"
+          />
+          <p class="text-xs text-slate-500 mt-1.5">多个模型用英文逗号分隔</p>
+        </div>
+
+        <!-- Contact (optional) -->
+        <div>
+          <label for="contact" class="block text-sm font-medium text-slate-300 mb-1.5">
+            联系方式
+            <span class="text-slate-500 text-xs font-normal">（可选）</span>
+          </label>
+          <input
+            type="text"
+            id="contact"
+            name="contact"
+            placeholder="邮箱、Telegram、微信等"
+            class="input-base w-full"
+          />
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3 pt-2">
+          <button type="submit" id="submit-btn" class="btn-primary">
+            <Send className="w-4 h-4" />
+            提交上报
+          </button>
+          <a href="/" class="btn-ghost">
+            取消
+          </a>
+        </div>
+      </form>
+
+      <!-- Message area -->
+      <div id="message" class="hidden mt-5 p-4 rounded-lg text-sm"></div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById('report-form') as HTMLFormElement | null;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
+  const messageDiv = document.getElementById('message') as HTMLDivElement | null;
+
+  if (form && submitBtn && messageDiv) {
+    const originalBtnHTML = submitBtn.innerHTML;
+
+    form.addEventListener('submit', async (e: Event) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {
+        name: (formData.get('name') as string)?.trim(),
+        url: (formData.get('url') as string)?.trim(),
+        description: (formData.get('description') as string)?.trim(),
+        models: (formData.get('models') as string)?.trim(),
+        contact: (formData.get('contact') as string)?.trim() || undefined,
+      };
+
+      // Client-side validation
+      if (!data.name || !data.url || !data.description || !data.models) {
+        showMessage('请填写所有必填字段', false);
+        return;
+      }
+
+      // Loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML =
+        '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> 提交中...';
+      hideMessage();
+
+      try {
+        const res = await fetch('/api/report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          showMessage(result.message, true);
+          form.reset();
+        } else {
+          showMessage(result.message || '提交失败，请稍后重试', false);
+        }
+      } catch {
+        showMessage('网络错误，提交失败，请稍后重试', false);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHTML;
+      }
+    });
+  }
+
+  function showMessage(text: string, success: boolean) {
+    if (!messageDiv) return;
+    messageDiv.textContent = text;
+    messageDiv.className = `mt-5 p-4 rounded-lg text-sm border ${
+      success
+        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+        : 'bg-red-500/10 text-red-400 border-red-500/20'
+    }`;
+  }
+
+  function hideMessage() {
+    if (!messageDiv) return;
+    messageDiv.className = 'hidden mt-5 p-4 rounded-lg text-sm';
+    messageDiv.textContent = '';
+  }
+</script>

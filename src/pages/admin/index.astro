@@ -1,0 +1,228 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllStations, getPendingReports } from '../../server/db';
+import {
+  Plus,
+  LogOut,
+  Pencil,
+  Trash2,
+  Star,
+  ClipboardList,
+  Server,
+  ExternalLink,
+} from 'lucide-react';
+
+const stations = getAllStations();
+const pendingCount = getPendingReports().length;
+---
+
+<Layout title="管理面板 — AI Hub">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-100 mb-1">管理面板</h1>
+        <p class="text-sm text-slate-500">管理中转站信息、审核上报</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="/admin/stations/new" class="btn-primary">
+          <Plus className="w-4 h-4" />
+          新增中转站
+        </a>
+        <a href="/admin/reports" class="btn-ghost relative">
+          <ClipboardList className="w-4 h-4" />
+          查看上报
+          {pendingCount > 0 && (
+            <span class="ml-1 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-bold text-white bg-red-500 rounded-full">
+              {pendingCount}
+            </span>
+          )}
+        </a>
+        <button id="logout-btn" class="btn-ghost">
+          <LogOut className="w-4 h-4" />
+          退出登录
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div class="card-base">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+            <Server className="w-5 h-5 text-blue-400" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-slate-100">{stations.length}</div>
+            <div class="text-xs text-slate-500">收录中转站</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-base">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+            <ClipboardList className="w-5 h-5 text-amber-400" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-slate-100">{pendingCount}</div>
+            <div class="text-xs text-slate-500">待审核上报</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-base">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+            <Star className="w-5 h-5 text-emerald-400" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-slate-100">
+              {stations.length > 0
+                ? (stations.reduce((sum, s) => sum + s.rating, 0) / stations.length).toFixed(1)
+                : '—'}
+            </div>
+            <div class="text-xs text-slate-500">平均评分</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stations table -->
+    <div class="card-base !p-0 overflow-hidden">
+      <div class="px-5 py-4 border-b border-[#1e293b]">
+        <h2 class="text-sm font-semibold text-slate-100">中转站列表</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left text-xs text-slate-500 uppercase tracking-wider border-b border-[#1e293b]">
+              <th class="px-5 py-3 font-medium">站名</th>
+              <th class="px-5 py-3 font-medium">Slug</th>
+              <th class="px-5 py-3 font-medium text-center">模型数</th>
+              <th class="px-5 py-3 font-medium text-center">评分</th>
+              <th class="px-5 py-3 font-medium">更新时间</th>
+              <th class="px-5 py-3 font-medium text-right">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stations.map((station) => (
+              <tr class="border-b border-[#1e293b] hover:bg-slate-800/30 transition-colors">
+                <td class="px-5 py-3">
+                  <a
+                    href={`/stations/${station.slug}`}
+                    class="text-sm font-medium text-slate-200 hover:text-blue-400 transition-colors inline-flex items-center gap-1.5"
+                  >
+                    {station.name}
+                    <ExternalLink className="w-3 h-3 text-slate-600" />
+                  </a>
+                </td>
+                <td class="px-5 py-3">
+                  <code class="text-xs text-slate-400 font-mono">{station.slug}</code>
+                </td>
+                <td class="px-5 py-3 text-center">
+                  <span class="text-sm text-slate-300 font-mono">{station.models.length}</span>
+                </td>
+                <td class="px-5 py-3 text-center">
+                  <span class="badge-rating inline-flex items-center gap-1">
+                    <Star className="w-3 h-3" fill="currentColor" />
+                    {station.rating.toFixed(1)}
+                  </span>
+                </td>
+                <td class="px-5 py-3">
+                  <span class="text-xs text-slate-400 font-mono">{station.updatedAt}</span>
+                </td>
+                <td class="px-5 py-3">
+                  <div class="flex items-center justify-end gap-2">
+                    <a
+                      href={`/admin/stations/${station.slug}/edit`}
+                      class="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-blue-400 transition-colors px-2 py-1 rounded border border-slate-700 hover:border-blue-500/50"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      编辑
+                    </a>
+                    <button
+                      data-slug={station.slug}
+                      data-name={station.name}
+                      class="delete-btn inline-flex items-center gap-1 text-xs text-slate-400 hover:text-red-400 transition-colors px-2 py-1 rounded border border-slate-700 hover:border-red-500/50"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      删除
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div
+      id="toast"
+      class="fixed bottom-6 right-6 hidden z-50"
+    >
+      <div class="card-base !py-3 !px-4 shadow-lg shadow-black/30">
+        <p id="toast-text" class="text-sm text-slate-200"></p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script is:inline>
+  // Logout
+  const logoutBtn = document.getElementById('logout-btn');
+  logoutBtn.addEventListener('click', async () => {
+    try {
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+      if (res.ok) {
+        window.location.href = '/admin/login';
+      }
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  });
+
+  // Toast helper
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-text');
+    toastText.textContent = message;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3000);
+  }
+
+  // Delete station
+  document.querySelectorAll('.delete-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const slug = btn.getAttribute('data-slug');
+      const name = btn.getAttribute('data-name');
+      if (!confirm('确认删除中转站「' + name + '」？此操作不可撤销。')) return;
+
+      btn.disabled = true;
+      const originalContent = btn.innerHTML;
+      btn.innerHTML = '删除中...';
+
+      try {
+        const res = await fetch('/api/admin/stations/' + slug, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('已删除中转站「' + name + '」');
+          const row = btn.closest('tr');
+          if (row) {
+            row.style.transition = 'opacity 0.3s';
+            row.style.opacity = '0';
+            setTimeout(() => row.remove(), 300);
+          }
+        } else {
+          const data = await res.json().catch(() => ({}));
+          showToast(data.error || '删除失败');
+          btn.disabled = false;
+          btn.innerHTML = originalContent;
+        }
+      } catch (err) {
+        showToast('网络错误，删除失败');
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+      }
+    });
+  });
+</script>

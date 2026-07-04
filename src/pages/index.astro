@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StationExplorer from '../components/StationExplorer.tsx';
+import { getAllStations } from '../server/db';
+import { getModelCategoriesFromStations, extractAllModels } from '../utils/stations';
+import { Github } from 'lucide-react';
+
+const stations = getAllStations();
+const modelCategories = getModelCategoriesFromStations(stations);
+const allModels = extractAllModels(stations);
+---
+
+<Layout>
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 hero-glow"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+        开源项目 · 社区驱动
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-100 mb-4">
+        AI 中转站<span class="text-blue-400">导航</span>
+      </h1>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-8">
+        聚合各家 AI API 中转站的模型、价格和特性信息，一站式对比，找到最适合你的服务。
+      </p>
+      <div class="flex items-center justify-center gap-3">
+        <a
+          href="https://github.com/your-repo/ai-hub"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-ghost"
+        >
+          <Github className="w-4 h-4" />
+          GitHub
+        </a>
+        <a href="#stations" class="btn-primary">
+          浏览中转站
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="flex items-center justify-center gap-8 mt-12">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-slate-100">{stations.length}</div>
+          <div class="text-xs text-slate-500 mt-1">收录中转站</div>
+        </div>
+        <div class="w-px h-10 bg-slate-800"></div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-slate-100">{allModels.length}</div>
+          <div class="text-xs text-slate-500 mt-1">支持模型</div>
+        </div>
+        <div class="w-px h-10 bg-slate-800"></div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-slate-100">100%</div>
+          <div class="text-xs text-slate-500 mt-1">免费开源</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stations list -->
+  <section id="stations" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <StationExplorer
+      client:load
+      stations={stations}
+      modelCategories={modelCategories}
+    />
+  </section>
+</Layout>

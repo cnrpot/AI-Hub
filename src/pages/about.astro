@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Github, Heart, Zap } from 'lucide-react';
+---
+
+<Layout
+  title="关于 — AI Hub"
+  description="AI Hub 是一个开源的 AI 中转站信息聚合平台，由社区驱动维护。"
+>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 mb-4">
+        <Zap className="w-8 h-8 text-white" strokeWidth={2.5} />
+      </div>
+      <h1 class="text-3xl font-bold text-slate-100 mb-3">关于 AI Hub</h1>
+      <p class="text-slate-400 max-w-xl mx-auto">
+        一个开源的 AI API 中转站信息聚合与对比平台，帮助开发者快速找到合适的 AI API 服务。
+      </p>
+    </div>
+
+    <div class="space-y-8">
+      <section class="card-base">
+        <h2 class="text-lg font-semibold text-slate-100 mb-3">项目初衷</h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          当前 AI API 中转站数量众多，价格、模型支持、稳定性各异，信息分散在各个社群和论坛中。
+          用户需要逐一访问各家官网对比，耗时且容易遗漏。AI Hub 希望成为一个集中、可信、可对比的信息源，
+          让用户在几分钟内找到最优选择。
+        </p>
+      </section>
+
+      <section class="card-base">
+        <h2 class="text-lg font-semibold text-slate-100 mb-3">技术栈</h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          本项目使用 Astro 5 + React 18 + Tailwind CSS 构建，纯前端静态站点，数据以 JSON 文件维护。
+          部署零成本，可托管在任何静态文件服务器上。
+        </p>
+      </section>
+
+      <section class="card-base">
+        <h2 class="text-lg font-semibold text-slate-100 mb-3">如何贡献</h2>
+        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+          欢迎通过 Pull Request 贡献新的中转站信息或更新现有数据。只需修改
+          <code class="text-xs font-mono bg-slate-800 text-cyan-400 rounded px-1.5 py-0.5">data/stations.json</code>
+          文件，按照现有格式添加新条目即可。
+        </p>
+        <div class="flex items-center gap-3">
+          <a
+            href="https://github.com/your-repo/ai-hub"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary"
+          >
+            <Github className="w-4 h-4" />
+            GitHub 仓库
+          </a>
+        </div>
+      </section>
+
+      <section class="card-base">
+        <h2 class="text-lg font-semibold text-slate-100 mb-3">免责声明</h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          本站信息由社区贡献维护，仅供参考。使用前请自行核实各中转站的实际服务和价格。
+          本项目不对任何中转站的服务质量负责。
+        </p>
+      </section>
+
+      <div class="text-center pt-4">
+        <p class="text-sm text-slate-500 flex items-center justify-center gap-1.5">
+          Made with <Heart className="w-4 h-4 text-red-400" fill="currentColor" /> by open source community
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>

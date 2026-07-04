@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BestPriceFinder from '../components/BestPriceFinder';
+import { getAllStations } from '../server/db';
+import { TrendingDown } from 'lucide-react';
+
+const stations = getAllStations();
+---
+
+<Layout title="最优价查找 — AI Hub" description="输入模型名称，一键查找各中转站定价排名，找到最便宜的 API 中转服务。">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-emerald-500/20 flex items-center justify-center">
+        <TrendingDown className="w-5 h-5 text-emerald-400" />
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-100">跨站最优价查找</h1>
+        <p class="text-sm text-slate-500">搜索模型名称，查看各中转站定价排名</p>
+      </div>
+    </div>
+
+    <BestPriceFinder client:load stations={stations} />
+  </div>
+</Layout>

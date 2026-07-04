@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-base text-slate-100 antialiased;
+  }
+  body {
+    @apply min-h-screen bg-base;
+  }
+  * {
+    @apply border-border;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .card-base {
+    @apply bg-surface border border-border rounded-xl p-5 transition-all duration-200;
+  }
+  .card-hover {
+    @apply hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10;
+  }
+  .btn-primary {
+    @apply bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors inline-flex items-center gap-2;
+  }
+  .btn-ghost {
+    @apply bg-transparent border border-slate-700 hover:border-slate-500 text-slate-300 rounded-lg px-4 py-2 text-sm font-medium transition-colors inline-flex items-center gap-2;
+  }
+  .badge-model {
+    @apply bg-slate-800 text-slate-300 rounded px-2 py-0.5 text-xs font-mono;
+  }
+  .badge-feature {
+    @apply bg-cyan-500/10 text-cyan-400 rounded px-2 py-0.5 text-xs;
+  }
+  .badge-rating {
+    @apply bg-amber-500/10 text-amber-400 rounded px-2 py-0.5 text-xs font-medium;
+  }
+  .input-base {
+    @apply bg-base border border-slate-700 focus:border-blue-500 rounded-lg px-4 py-2 text-sm text-slate-100 placeholder-slate-500 outline-none transition-colors;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0e1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a4f;
+}
