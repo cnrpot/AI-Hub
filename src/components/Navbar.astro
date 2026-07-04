@@ -1,9 +1,19 @@
 ---
-import { Github, Zap, Command } from 'lucide-react';
+import { Github, Zap, Command, Menu, X } from 'lucide-react';
 ---
 
 <header class="sticky top-0 z-50 bg-base/80 backdrop-blur-md border-b border-[#1e293b]">
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <!-- Mobile hamburger -->
+    <button
+      id="mobile-menu-btn"
+      class="sm:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+      aria-label="打开菜单"
+    >
+      <Menu className="w-5 h-5" id="menu-icon-open" />
+      <X className="w-5 h-5 hidden" id="menu-icon-close" />
+    </button>
+
     <a href="/" class="flex items-center gap-2.5 group">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
         <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -12,11 +22,12 @@ import { Github, Zap, Command } from 'lucide-react';
       <span class="hidden sm:inline text-xs text-slate-500 font-mono">中转站导航</span>
     </a>
 
-    <div class="flex items-center gap-3 sm:gap-4">
+    <!-- Desktop nav -->
+    <div class="hidden sm:flex items-center gap-3 lg:gap-4">
       <a href="/" class="text-sm text-slate-400 hover:text-slate-100 transition-colors">首页</a>
-      <a href="/compare" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden sm:inline">对比</a>
-      <a href="/calculator" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden sm:inline">计算器</a>
-      <a href="/best-price" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden sm:inline">最优价</a>
+      <a href="/compare" class="text-sm text-slate-400 hover:text-slate-100 transition-colors">对比</a>
+      <a href="/calculator" class="text-sm text-slate-400 hover:text-slate-100 transition-colors">计算器</a>
+      <a href="/best-price" class="text-sm text-slate-400 hover:text-slate-100 transition-colors">最优价</a>
       <a href="/price-history" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">趋势</a>
       <a href="/health" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">监控</a>
       <a href="/cardshops" class="text-sm text-slate-400 hover:text-slate-100 transition-colors hidden lg:inline">卡网</a>
@@ -25,7 +36,7 @@ import { Github, Zap, Command } from 'lucide-react';
       <!-- Cmd+K hint -->
       <button
         id="cmd-k-trigger"
-        class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-slate-500 bg-slate-800/50 border border-slate-700 hover:border-slate-600 rounded-lg transition-colors cursor-pointer"
+        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-slate-500 bg-slate-800/50 border border-slate-700 hover:border-slate-600 rounded-lg transition-colors cursor-pointer"
         title="搜索 (Cmd/Ctrl+K)"
       >
         <Command className="w-3.5 h-3.5" />
@@ -42,7 +53,6 @@ import { Github, Zap, Command } from 'lucide-react';
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12.003 0c-3.314 0-6.003 2.687-6.003 6.003 0 .69.117 1.352.334 1.966-1.764.273-3.334 1.514-3.334 3.535 0 1.214.654 2.286 1.625 2.875-.237.537-.375 1.13-.375 1.755 0 2.416 1.969 4.374 4.391 4.374.555 0 1.083-.104 1.569-.292.517.832 1.438 1.387 2.493 1.387s1.976-.555 2.493-1.387c.486.188 1.014.292 1.569.292 2.422 0 4.391-1.958 4.391-4.374 0-.625-.138-1.218-.375-1.755.971-.589 1.625-1.661 1.625-2.875 0-2.021-1.57-3.262-3.334-3.535.217-.614.334-1.276.334-1.966C18.006 2.687 15.317 0 12.003 0z"/>
         </svg>
-        <span class="hidden sm:inline">QQ群</span>
       </a>
       <a
         href="https://t.me/+nmwciPguEQMyNjhl"
@@ -54,7 +64,6 @@ import { Github, Zap, Command } from 'lucide-react';
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
           <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.901-.903-1.056-.693-1.653-1.124-2.681-1.8-1.186-.781-.418-1.214.26-1.917.179-.186 3.352-3.071 3.414-3.335.008-.04.015-.188-.07-.265-.085-.077-.21-.05-.3-.031-.127.03-2.083 1.324-5.866 3.887-.556.382-1.059.568-1.51.558-.497-.011-1.454-.281-2.163-.511-.872-.283-1.563-.433-1.503-.915.031-.252.374-.51 1.029-.78 4.036-1.757 6.725-2.916 8.064-3.475 3.842-1.598 4.642-1.875 5.166-1.884z"/>
         </svg>
-        <span class="hidden sm:inline">Telegram</span>
       </a>
       <a
         href="https://github.com/cnrpot/AI-Hub"
@@ -63,14 +72,147 @@ import { Github, Zap, Command } from 'lucide-react';
         class="btn-ghost !px-3 !py-1.5"
       >
         <Github className="w-4 h-4" />
-        <span class="hidden sm:inline">GitHub</span>
       </a>
     </div>
   </nav>
 </header>
 
+<!-- Mobile drawer -->
+<div id="mobile-drawer" class="fixed inset-0 z-[60] hidden">
+  <!-- Backdrop -->
+  <div id="mobile-drawer-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <!-- Drawer panel -->
+  <div id="mobile-drawer-panel" class="absolute left-0 top-0 bottom-0 w-72 bg-surface border-r border-[#1e293b] flex flex-col transform -translate-x-full transition-transform duration-300 ease-out">
+    <!-- Drawer header -->
+    <div class="flex items-center gap-2.5 px-5 h-16 border-b border-[#1e293b]">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+        <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
+      </div>
+      <span class="text-lg font-bold text-slate-100">AI Hub</span>
+    </div>
+
+    <!-- Nav links -->
+    <div class="flex-1 overflow-y-auto py-4 px-3">
+      <div class="space-y-1">
+        <a href="/" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          首页
+        </a>
+        <a href="/compare" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          对比
+        </a>
+        <a href="/calculator" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+          用量计算器
+        </a>
+        <a href="/best-price" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          最优价查找
+        </a>
+        <a href="/price-history" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          价格趋势
+        </a>
+        <a href="/favorites" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          我的收藏
+        </a>
+        <a href="/health" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          健康监控
+        </a>
+        <a href="/cardshops" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          卡网汇总
+        </a>
+        <a href="/report" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          上报中转站
+        </a>
+        <a href="/about" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          关于
+        </a>
+      </div>
+
+      <!-- Divider -->
+      <div class="border-t border-[#1e293b] my-4"></div>
+
+      <!-- Social links -->
+      <div class="space-y-1">
+        <a href="https://qm.qq.com/cgi-bin/qm/qr?group_code=851377981" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.003 0c-3.314 0-6.003 2.687-6.003 6.003 0 .69.117 1.352.334 1.966-1.764.273-3.334 1.514-3.334 3.535 0 1.214.654 2.286 1.625 2.875-.237.537-.375 1.13-.375 1.755 0 2.416 1.969 4.374 4.391 4.374.555 0 1.083-.104 1.569-.292.517.832 1.438 1.387 2.493 1.387s1.976-.555 2.493-1.387c.486.188 1.014.292 1.569.292 2.422 0 4.391-1.958 4.391-4.374 0-.625-.138-1.218-.375-1.755.971-.589 1.625-1.661 1.625-2.875 0-2.021-1.57-3.262-3.334-3.535.217-.614.334-1.276.334-1.966C18.006 2.687 15.317 0 12.003 0z"/></svg>
+          QQ 群
+        </a>
+        <a href="https://t.me/+nmwciPguEQMyNjhl" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.901-.903-1.056-.693-1.653-1.124-2.681-1.8-1.186-.781-.418-1.214.26-1.917.179-.186 3.352-3.071 3.414-3.335.008-.04.015-.188-.07-.265-.085-.077-.21-.05-.3-.031-.127.03-2.083 1.324-5.866 3.887-.556.382-1.059.568-1.51.558-.497-.011-1.454-.281-2.163-.511-.872-.283-1.563-.433-1.503-.915.031-.252.374-.51 1.029-.78 4.036-1.757 6.725-2.916 8.064-3.475 3.842-1.598 4.642-1.875 5.166-1.884z"/></svg>
+          Telegram
+        </a>
+        <a href="https://github.com/cnrpot/AI-Hub" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: #94a3b8;
+    transition: all 0.15s ease;
+  }
+  .mobile-nav-link:hover,
+  .mobile-nav-link:active {
+    background: rgba(30, 41, 59, 0.8);
+    color: #e2e8f0;
+  }
+</style>
+
 <script is:inline>
-  // Cmd+K trigger button click opens palette
+  // Mobile drawer toggle
+  const btn = document.getElementById('mobile-menu-btn');
+  const drawer = document.getElementById('mobile-drawer');
+  const backdrop = document.getElementById('mobile-drawer-backdrop');
+  const panel = document.getElementById('mobile-drawer-panel');
+  const iconOpen = document.getElementById('menu-icon-open');
+  const iconClose = document.getElementById('menu-icon-close');
+
+  function openDrawer() {
+    drawer.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      panel.style.transform = 'translateX(0)';
+    });
+    document.body.style.overflow = 'hidden';
+    iconOpen.classList.add('hidden');
+    iconClose.classList.remove('hidden');
+  }
+
+  function closeDrawer() {
+    panel.style.transform = 'translateX(-100%)';
+    document.body.style.overflow = '';
+    iconOpen.classList.remove('hidden');
+    iconClose.classList.add('hidden');
+    setTimeout(() => drawer.classList.add('hidden'), 300);
+  }
+
+  if (btn) btn.addEventListener('click', () => {
+    if (drawer.classList.contains('hidden')) openDrawer();
+    else closeDrawer();
+  });
+  if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+  // Close on link click
+  drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeDrawer));
+
+  // Cmd+K trigger
   const trigger = document.getElementById('cmd-k-trigger');
   if (trigger) {
     trigger.addEventListener('click', () => {
