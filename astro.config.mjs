@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
 
 export default defineConfig({
-  site: 'https://aihub.example.com',
+  site: 'https://ai-hub.example.com',
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [react(), tailwind(), sitemap()],

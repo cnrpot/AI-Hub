@@ -1,0 +1,16 @@
+services:
+  ai-hub:
+    build: .
+    container_name: ai-hub
+    restart: unless-stopped
+    ports:
+      - "4321:4321"
+    volumes:
+      # Persist data across container restarts
+      - ./data:/app/data
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=4321
+      - HOST=0.0.0.0
