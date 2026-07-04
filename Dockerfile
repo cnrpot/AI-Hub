@@ -14,9 +14,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install only production dependencies for the standalone server
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --ignore-scripts --legacy-peer-deps && npm cache clean --force
+# Copy node_modules from builder (ensures all runtime deps are present)
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy built output from builder
 COPY --from=builder /app/dist ./dist
@@ -26,6 +25,9 @@ COPY --from=builder /app/data ./data
 
 # Copy public assets (if referenced at runtime)
 COPY --from=builder /app/public ./public
+
+# Copy package.json (needed for Node.js ESM resolution)
+COPY --from=builder /app/package.json ./package.json
 
 # Environment defaults
 ENV NODE_ENV=production
