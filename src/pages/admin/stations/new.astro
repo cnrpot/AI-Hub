@@ -161,24 +161,30 @@ import { ArrowLeft, Save } from 'lucide-react';
         </div>
       </div>
 
-      <!-- Pricing JSON -->
+      <!-- Pricing Editor -->
       <div>
-        <label for="pricing" class="block text-sm font-medium text-slate-300 mb-2">
-          模型定价 (JSON) <span class="text-red-400">*</span>
-        </label>
-        <textarea
-          id="pricing"
-          name="pricing"
-          required
-          rows="8"
-          class="input-base w-full font-mono text-xs resize-none"
-          placeholder='{
-  "gpt-4o": { "input": 0.015, "output": 0.06, "unit": "per 1M tokens" },
-  "gpt-4o-mini": { "input": 0.0003, "output": 0.0012, "unit": "per 1M tokens" }
-}'></textarea>
+        <div class="flex items-center justify-between mb-2">
+          <label class="block text-sm font-medium text-slate-300">
+            模型定价 <span class="text-red-400">*</span>
+          </label>
+          <div class="flex gap-2">
+            <button type="button" id="sync-models-btn" class="text-xs px-3 py-1.5 rounded-lg bg-slate-700/50 text-slate-300 hover:bg-slate-700 border border-slate-600/50 transition-colors">
+              从模型列表同步
+            </button>
+            <button type="button" id="add-pricing-btn" class="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 text-blue-300 hover:bg-blue-600/30 border border-blue-500/30 transition-colors">
+              + 添加模型
+            </button>
+          </div>
+        </div>
+
+        <div id="pricing-editor" class="space-y-2 border border-[#1e293b] rounded-xl p-3 bg-[#0b1120]/50">
+          <!-- rows inserted by JS -->
+        </div>
+
         <p class="text-xs text-slate-500 mt-1">
-          JSON 格式，key 为模型名，value 包含 input / output / unit
+          价格为 USD / 1M tokens。点击「从模型列表同步」可自动添加上方填写的模型行。
         </p>
+        <textarea id="pricing" name="pricing" class="hidden"></textarea>
       </div>
 
       <!-- Error message -->
@@ -204,24 +210,100 @@ import { ArrowLeft, Save } from 'lucide-react';
   const form = document.getElementById('station-form');
   const errorMsg = document.getElementById('error-msg');
   const submitBtn = document.getElementById('submit-btn');
+  const pricingEditor = document.getElementById('pricing-editor');
+  const pricingTextarea = document.getElementById('pricing');
+  const addBtn = document.getElementById('add-pricing-btn');
+  const syncBtn = document.getElementById('sync-models-btn');
 
+  /* ---- Pricing Editor ---- */
+  function createPricingRow(model = '', input = '', output = '') {
+    const row = document.createElement('div');
+    row.className = 'flex items-center gap-2';
+    row.innerHTML = `
+      <input type="text" placeholder="模型名称" value="${model}"
+        class="input-base flex-1 min-w-0 text-sm py-1.5 px-2" data-field="model" />
+      <input type="number" placeholder="Input 价格" value="${input}" step="any"
+        class="input-base w-28 text-sm py-1.5 px-2" data-field="input" />
+      <input type="number" placeholder="Output 价格" value="${output}" step="any"
+        class="input-base w-28 text-sm py-1.5 px-2" data-field="output" />
+      <button type="button" class="shrink-0 p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors" title="删除">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    `;
+    row.querySelector('button').addEventListener('click', () => {
+      row.remove();
+      syncPricingJson();
+    });
+    row.querySelectorAll('input').forEach(inp =>
+      inp.addEventListener('input', syncPricingJson)
+    );
+    return row;
+  }
+
+  function syncPricingJson() {
+    const pricing = collectPricing();
+    pricingTextarea.value = JSON.stringify(pricing);
+    // Auto-sync models list
+    const modelNames = Object.keys(pricing);
+    if (modelNames.length > 0) {
+      const currentModels = document.getElementById('models').value.trim();
+      const existingSet = new Set(currentModels.split(',').map(s => s.trim()).filter(Boolean));
+      modelNames.forEach(m => existingSet.add(m));
+      document.getElementById('models').value = [...existingSet].join(', ');
+    }
+  }
+
+  function collectPricing() {
+    const pricing = {};
+    pricingEditor.querySelectorAll('.flex.items-center').forEach(row => {
+      const model = row.querySelector('[data-field="model"]').value.trim();
+      const input = parseFloat(row.querySelector('[data-field="input"]').value);
+      const output = parseFloat(row.querySelector('[data-field="output"]').value);
+      if (model) {
+        pricing[model] = {
+          input: isNaN(input) ? 0 : input,
+          output: isNaN(output) ? 0 : output,
+          unit: 'per 1M tokens'
+        };
+      }
+    });
+    return pricing;
+  }
+
+  addBtn.addEventListener('click', () => {
+    pricingEditor.appendChild(createPricingRow());
+    pricingEditor.querySelector('.flex.items-center:last-child input').focus();
+  });
+
+  syncBtn.addEventListener('click', () => {
+    const modelsStr = document.getElementById('models').value;
+    const models = modelsStr.split(',').map(s => s.trim()).filter(Boolean);
+    const existing = collectPricing();
+    let added = 0;
+    models.forEach(m => {
+      if (!existing[m]) {
+        pricingEditor.appendChild(createPricingRow(m));
+        added++;
+      }
+    });
+    if (added === 0 && models.length === 0) {
+      alert('请先在上方「支持模型」中填写模型名称');
+    }
+    syncPricingJson();
+  });
+
+  /* ---- Form Submit ---- */
   function parseCommaList(value) {
-    return value
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
+    return value.split(',').map(s => s.trim()).filter(Boolean);
   }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg.classList.add('hidden');
 
-    // Parse pricing JSON
-    let pricing;
-    try {
-      pricing = JSON.parse(document.getElementById('pricing').value);
-    } catch (err) {
-      errorMsg.textContent = '模型定价 JSON 格式错误，请检查';
+    const pricing = collectPricing();
+    if (Object.keys(pricing).length === 0) {
+      errorMsg.textContent = '请至少添加一个模型的定价';
       errorMsg.classList.remove('hidden');
       return;
     }
