@@ -14,7 +14,7 @@ const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
 /* ------------------------------------------------------------------ */
 
 function getSecret(): string {
-  const secret: string | undefined = import.meta.env.SESSION_SECRET;
+  const secret: string | undefined = process.env.SESSION_SECRET;
   if (!secret) {
     throw new Error('SESSION_SECRET is not configured. Set it in your .env file.');
   }
@@ -52,7 +52,7 @@ function safeEqualHex(a: string, b: string): boolean {
  * @throws  if `ADMIN_PASSWORD` is not configured.
  */
 export function createSession(cookies: AstroCookies, password: string): boolean {
-  const adminPassword: string | undefined = import.meta.env.ADMIN_PASSWORD;
+  const adminPassword: string | undefined = process.env.ADMIN_PASSWORD;
   if (!adminPassword) {
     throw new Error('ADMIN_PASSWORD is not configured. Set it in your .env file.');
   }
@@ -85,7 +85,7 @@ export function createSession(cookies: AstroCookies, password: string): boolean 
  *  - the session has expired.
  */
 export function isAuthenticated(cookies: AstroCookies): boolean {
-  const secret: string | undefined = import.meta.env.SESSION_SECRET;
+  const secret: string | undefined = process.env.SESSION_SECRET;
   if (!secret) {
     return false;
   }
