@@ -2,10 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import type { Station, Report } from '../types/station';
+import type { CardShop } from '../types/cardshop';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const STATIONS_PATH = path.join(DATA_DIR, 'stations.json');
 const REPORTS_PATH = path.join(DATA_DIR, 'reports.json');
+const CARD_SHOPS_PATH = path.join(DATA_DIR, 'cardshops.json');
 
 /** Input shape for addReport — system-generated fields are omitted. */
 export type ReportInput = Omit<Report, 'id' | 'status' | 'createdAt'>;
@@ -196,4 +198,72 @@ export function updateReport(id: string, updates: Partial<Pick<Report, 'name' | 
   if (updates.models !== undefined) reports[index].models = updates.models;
   writeReports(reports);
   return reports[index];
+}
+
+/* ------------------------------------------------------------------ */
+/*  CardShop CRUD                                                      */
+/* ------------------------------------------------------------------ */
+
+function readCardShops(): CardShop[] {
+  return readJson<CardShop>(CARD_SHOPS_PATH);
+}
+
+function writeCardShops(shops: CardShop[]): void {
+  writeJson(CARD_SHOPS_PATH, shops);
+}
+
+/** Recompute denormalized fields: productCount, inStockCount, lowestPrice. */
+function recomputeCardShopStats(shop: CardShop): void {
+  shop.productCount = shop.products.length;
+  shop.inStockCount = shop.products.filter(p => p.stockStatus !== 'out_of_stock').length;
+  const prices = shop.products.filter(p => p.price > 0).map(p => p.price);
+  shop.lowestPrice = prices.length > 0 ? Math.min(...prices) : null;
+}
+
+/** Return all card shops. */
+export function getAllCardShops(): CardShop[] {
+  return readCardShops();
+}
+
+/** Find a single card shop by ID. */
+export function getCardShopById(id: string): CardShop | undefined {
+  return readCardShops().find(s => s.id === id);
+}
+
+/** Add a new card shop. Auto-generates id and updatedAt. */
+export function addCardShop(input: Omit<CardShop, 'id' | 'updatedAt' | 'productCount' | 'inStockCount' | 'lowestPrice'>): CardShop {
+  const shops = readCardShops();
+  const shop: CardShop = {
+    ...input,
+    id: randomUUID(),
+    productCount: 0,
+    inStockCount: 0,
+    lowestPrice: null,
+    updatedAt: new Date().toISOString(),
+  };
+  recomputeCardShopStats(shop);
+  shops.push(shop);
+  writeCardShops(shops);
+  return shop;
+}
+
+/** Update a card shop by ID. Returns undefined if not found. */
+export function updateCardShop(id: string, updates: Partial<CardShop>): CardShop | undefined {
+  const shops = readCardShops();
+  const index = shops.findIndex(s => s.id === id);
+  if (index === -1) return undefined;
+  shops[index] = { ...shops[index], ...updates, id: shops[index].id };
+  shops[index].updatedAt = new Date().toISOString();
+  recomputeCardShopStats(shops[index]);
+  writeCardShops(shops);
+  return shops[index];
+}
+
+/** Delete a card shop by ID. Returns true if deleted. */
+export function deleteCardShop(id: string): boolean {
+  const shops = readCardShops();
+  const filtered = shops.filter(s => s.id !== id);
+  if (filtered.length === shops.length) return false;
+  writeCardShops(filtered);
+  return true;
 }

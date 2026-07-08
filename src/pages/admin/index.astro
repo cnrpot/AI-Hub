@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getAllStations, getPendingReports } from '../../server/db';
+import { getAllStations, getPendingReports, getAllCardShops } from '../../server/db';
 import {
   Plus,
   LogOut,
@@ -10,10 +10,13 @@ import {
   ClipboardList,
   Server,
   ExternalLink,
+  ShoppingBag,
 } from 'lucide-react';
 
 const stations = getAllStations();
 const pendingCount = getPendingReports().length;
+const cardshops = getAllCardShops();
+const totalProducts = cardshops.reduce((sum, s) => sum + s.productCount, 0);
 ---
 
 <Layout title="管理面板 — AI Hub">
@@ -28,6 +31,10 @@ const pendingCount = getPendingReports().length;
         <a href="/admin/stations/new" class="btn-primary">
           <Plus className="w-4 h-4" />
           新增中转站
+        </a>
+        <a href="/admin/cardshops/new" class="btn-primary">
+          <ShoppingBag className="w-4 h-4" />
+          新增卡网
         </a>
         <a href="/admin/reports" class="btn-ghost relative">
           <ClipboardList className="w-4 h-4" />
@@ -156,6 +163,104 @@ const pendingCount = getPendingReports().length;
       </div>
     </div>
 
+    <!-- CardShops Section -->
+    <div class="mt-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-slate-100">卡网管理</h2>
+        <div class="flex items-center gap-4 text-sm text-slate-400">
+          <span>{cardshops.length} 家卡网</span>
+          <span>{totalProducts} 个商品</span>
+        </div>
+      </div>
+
+      <div class="card-base !p-0 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="text-left text-xs text-slate-500 uppercase tracking-wider border-b border-[#1e293b]">
+                <th class="px-5 py-3 font-medium">店名</th>
+                <th class="px-5 py-3 font-medium">类型</th>
+                <th class="px-5 py-3 font-medium text-center">商品数</th>
+                <th class="px-5 py-3 font-medium text-center">有货</th>
+                <th class="px-5 py-3 font-medium text-center">最低价</th>
+                <th class="px-5 py-3 font-medium text-center">状态</th>
+                <th class="px-5 py-3 font-medium text-right">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cardshops.length === 0 && (
+                <tr>
+                  <td colSpan={7} class="px-5 py-8 text-center text-slate-500 text-sm">
+                    暂无卡网数据，点击右上角「新增卡网」添加
+                  </td>
+                </tr>
+              )}
+              {cardshops.map((shop) => (
+                <tr class="border-b border-[#1e293b] hover:bg-slate-800/30 transition-colors">
+                  <td class="px-5 py-3">
+                    <a
+                      href={shop.url}
+                      target="_blank"
+                      rel="noopener"
+                      class="text-sm font-medium text-slate-200 hover:text-blue-400 transition-colors inline-flex items-center gap-1.5"
+                    >
+                      {shop.name}
+                      <ExternalLink className="w-3 h-3 text-slate-600" />
+                    </a>
+                  </td>
+                  <td class="px-5 py-3">
+                    <span class="text-xs text-slate-400">
+                      {{ kami: '卡密', dujiao: '独角', shopApi: '链动', genericHtml: '通用', other: '其他' }[shop.shopType] || shop.shopType}
+                    </span>
+                  </td>
+                  <td class="px-5 py-3 text-center">
+                    <span class="text-sm text-slate-300 font-mono">{shop.productCount}</span>
+                  </td>
+                  <td class="px-5 py-3 text-center">
+                    <span class="text-sm text-emerald-400 font-mono">{shop.inStockCount}</span>
+                  </td>
+                  <td class="px-5 py-3 text-center">
+                    <span class="text-sm text-slate-300 font-mono">
+                      {shop.lowestPrice != null ? `¥${shop.lowestPrice}` : '—'}
+                    </span>
+                  </td>
+                  <td class="px-5 py-3 text-center">
+                    <span class={`text-xs px-2 py-0.5 rounded-full ${
+                      shop.healthStatus === 'healthy' ? 'bg-emerald-500/10 text-emerald-400' :
+                      shop.healthStatus === 'failing' ? 'bg-red-500/10 text-red-400' :
+                      shop.healthStatus === 'retrying' ? 'bg-amber-500/10 text-amber-400' :
+                      'bg-slate-500/10 text-slate-400'
+                    }`}>
+                      {{ healthy: '正常', failing: '故障', retrying: '重试', unknown: '未知' }[shop.healthStatus] || '未知'}
+                    </span>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="flex items-center justify-end gap-2">
+                      <a
+                        href={`/admin/cardshops/${shop.id}/edit`}
+                        class="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-blue-400 transition-colors px-2 py-1 rounded border border-slate-700 hover:border-blue-500/50"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                        编辑
+                      </a>
+                      <button
+                        data-shop-id={shop.id}
+                        data-shop-name={shop.name}
+                        class="delete-shop-btn inline-flex items-center gap-1 text-xs text-slate-400 hover:text-red-400 transition-colors px-2 py-1 rounded border border-slate-700 hover:border-red-500/50"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        删除
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast notification -->
     <div
       id="toast"
@@ -215,6 +320,41 @@ const pendingCount = getPendingReports().length;
         } else {
           const data = await res.json().catch(() => ({}));
           showToast(data.error || '删除失败');
+          btn.disabled = false;
+          btn.innerHTML = originalContent;
+        }
+      } catch (err) {
+        showToast('网络错误，删除失败');
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+      }
+    });
+  });
+
+  // Delete cardshop
+  document.querySelectorAll('.delete-shop-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const shopId = btn.getAttribute('data-shop-id');
+      const name = btn.getAttribute('data-shop-name');
+      if (!confirm('确认删除卡网「' + name + '」？此操作不可撤销。')) return;
+
+      btn.disabled = true;
+      const originalContent = btn.innerHTML;
+      btn.innerHTML = '删除中...';
+
+      try {
+        const res = await fetch('/api/admin/cardshops/' + shopId, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('已删除卡网「' + name + '」');
+          const row = btn.closest('tr');
+          if (row) {
+            row.style.transition = 'opacity 0.3s';
+            row.style.opacity = '0';
+            setTimeout(() => row.remove(), 300);
+          }
+        } else {
+          const data = await res.json().catch(() => ({}));
+          showToast(data.message || '删除失败');
           btn.disabled = false;
           btn.innerHTML = originalContent;
         }

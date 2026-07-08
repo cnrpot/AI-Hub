@@ -1,10 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CardShopExplorer from '../components/CardShopExplorer.tsx';
-import type { CardShop } from '../types/cardshop';
-import cardshopsData from '../../data/cardshops.json';
+import { getAllCardShops } from '../server/db';
 
-const shops = cardshopsData as CardShop[];
+const shops = getAllCardShops();
 ---
 
 <Layout
