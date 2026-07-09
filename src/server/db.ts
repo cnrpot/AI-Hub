@@ -1,13 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { Station, Report } from '../types/station';
+import type { Station, Report, CardShopReport } from '../types/station';
 import type { CardShop } from '../types/cardshop';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const STATIONS_PATH = path.join(DATA_DIR, 'stations.json');
 const REPORTS_PATH = path.join(DATA_DIR, 'reports.json');
 const CARD_SHOPS_PATH = path.join(DATA_DIR, 'cardshops.json');
+const CARD_SHOP_REPORTS_PATH = path.join(DATA_DIR, 'cardshop-reports.json');
 
 /** Input shape for addReport — system-generated fields are omitted. */
 export type ReportInput = Omit<Report, 'id' | 'status' | 'createdAt'>;
@@ -149,7 +150,13 @@ export function approveReport(id: string): Report | undefined {
   writeReports(reports);
 
   // Create a Station from the report data
-  const slug = generateSlug(report.name);
+  let slug = generateSlug(report.name);
+  const stations = readStations();
+  // Ensure unique slug
+  if (stations.find((s) => s.slug === slug)) {
+    slug = slug + '-' + Date.now().toString(36);
+  }
+
   const station: Station = {
     name: report.name,
     slug,
@@ -163,12 +170,8 @@ export function approveReport(id: string): Report | undefined {
     updatedAt: new Date().toISOString().split('T')[0],
   };
 
-  const stations = readStations();
-  // Avoid duplicate slug
-  if (!stations.find((s) => s.slug === slug)) {
-    stations.push(station);
-    writeStations(stations);
-  }
+  stations.push(station);
+  writeStations(stations);
 
   return report;
 }
@@ -266,4 +269,78 @@ export function deleteCardShop(id: string): boolean {
   if (filtered.length === shops.length) return false;
   writeCardShops(filtered);
   return true;
+}
+
+/* ------------------------------------------------------------------ */
+/*  CardShop Report queue                                              */
+/* ------------------------------------------------------------------ */
+
+function readCardShopReports(): CardShopReport[] {
+  return readJson<CardShopReport>(CARD_SHOP_REPORTS_PATH);
+}
+
+function writeCardShopReports(reports: CardShopReport[]): void {
+  writeJson(CARD_SHOP_REPORTS_PATH, reports);
+}
+
+/** Add a user-submitted cardshop report. */
+export function addCardShopReport(input: Omit<CardShopReport, 'id' | 'status' | 'createdAt'>): CardShopReport {
+  const reports = readCardShopReports();
+  const report: CardShopReport = {
+    ...input,
+    id: randomUUID(),
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+  };
+  reports.push(report);
+  writeCardShopReports(reports);
+  return report;
+}
+
+/** Return all pending cardshop reports. */
+export function getPendingCardShopReports(): CardShopReport[] {
+  return readCardShopReports().filter(r => r.status === 'pending');
+}
+
+/** Approve a cardshop report — creates a CardShop entry. */
+export function approveCardShopReport(id: string): CardShopReport | undefined {
+  const reports = readCardShopReports();
+  const index = reports.findIndex(r => r.id === id);
+  if (index === -1) return undefined;
+
+  const report = reports[index];
+  report.status = 'approved';
+  writeCardShopReports(reports);
+
+  // Create a CardShop from the report
+  const shop: CardShop = {
+    id: randomUUID(),
+    name: report.name,
+    url: report.url,
+    description: report.description,
+    shopType: (report.shopType as CardShop['shopType']) || 'other',
+    products: [],
+    platforms: Array.isArray(report.platforms) ? report.platforms : [],
+    productCount: 0,
+    inStockCount: 0,
+    lowestPrice: null,
+    healthStatus: 'unknown',
+    updatedAt: new Date().toISOString(),
+  };
+
+  const shops = readCardShops();
+  shops.push(shop);
+  writeCardShops(shops);
+
+  return report;
+}
+
+/** Reject a cardshop report. */
+export function rejectCardShopReport(id: string): CardShopReport | undefined {
+  const reports = readCardShopReports();
+  const index = reports.findIndex(r => r.id === id);
+  if (index === -1) return undefined;
+  reports[index].status = 'rejected';
+  writeCardShopReports(reports);
+  return reports[index];
 }

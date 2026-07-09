@@ -1,317 +1,248 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getPendingReports } from '../../server/db';
-import { Check, X, ClipboardList, ExternalLink, ArrowLeft, Inbox, Pencil } from 'lucide-react';
+import { getPendingReports, getPendingCardShopReports } from '../../server/db';
+import { Check, X, ClipboardList, ExternalLink, ArrowLeft, Inbox, Pencil, ShoppingBag } from 'lucide-react';
 
-const reports = getPendingReports();
+const stationReports = getPendingReports();
+const cardShopReports = getPendingCardShopReports();
 
 function formatDate(iso: string): string {
   try {
     const d = new Date(iso);
     return d.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit',
     });
-  } catch {
-    return iso;
-  }
+  } catch { return iso; }
 }
+
+const SHOP_TYPE_LABELS: Record<string, string> = {
+  kami: '卡密', dujiao: '独角', shopApi: '链动', genericHtml: '通用', other: '其他',
+};
 ---
 
 <Layout title="上报审核 — AI Hub">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-slate-500 mb-6">
       <a href="/admin" class="hover:text-slate-300 transition-colors">管理面板</a>
       <span>/</span>
       <span class="text-slate-300">上报审核</span>
     </nav>
 
-    <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
         <h1 class="text-2xl font-bold text-slate-100 mb-1">上报审核</h1>
         <p class="text-sm text-slate-500">
-          待审核上报
-          {reports.length > 0 && (
-            <span class="ml-1 text-amber-400">({reports.length})</span>
-          )}
+          中转站 <span class="text-amber-400">({stationReports.length})</span>
+          &nbsp;·&nbsp; 卡网 <span class="text-amber-400">({cardShopReports.length})</span>
         </p>
       </div>
       <a href="/admin" class="btn-ghost">
         <ArrowLeft className="w-4 h-4" />
-        返回管理面板
+        返回
       </a>
     </div>
 
-    <!-- Reports list -->
-    {reports.length === 0 ? (
-      <!-- Empty state -->
-      <div class="card-base flex flex-col items-center justify-center py-16 text-center">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-slate-800 border border-[#1e293b] mb-4">
-          <Inbox className="w-7 h-7 text-slate-600" />
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6">
+      <button type="button" class="tab-btn active-tab text-sm px-4 py-2 rounded-lg font-medium transition-colors" data-tab="stations">
+        <ClipboardList className="w-4 h-4 inline mr-1" />中转站
+        {stationReports.length > 0 && <span class="ml-1 text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full">{stationReports.length}</span>}
+      </button>
+      <button type="button" class="tab-btn text-sm px-4 py-2 rounded-lg font-medium transition-colors" data-tab="cardshops">
+        <ShoppingBag className="w-4 h-4 inline mr-1" />卡网
+        {cardShopReports.length > 0 && <span class="ml-1 text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full">{cardShopReports.length}</span>}
+      </button>
+    </div>
+
+    <!-- Station Reports -->
+    <div id="tab-stations" class="tab-content">
+      {stationReports.length === 0 ? (
+        <div class="card-base flex flex-col items-center justify-center py-16 text-center">
+          <Inbox className="w-7 h-7 text-slate-600 mb-3" />
+          <h2 class="text-base font-semibold text-slate-300 mb-1">暂无待审核上报</h2>
+          <p class="text-sm text-slate-500">所有上报已处理完毕</p>
         </div>
-        <h2 class="text-base font-semibold text-slate-300 mb-1">暂无待审核上报</h2>
-        <p class="text-sm text-slate-500">所有上报已处理完毕</p>
-      </div>
-    ) : (
-      <div class="space-y-4">
-        {reports.map((report) => (
-          <div class="card-base" data-report-id={report.id}>
-            <!-- View mode -->
-            <div class="view-mode flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 mb-2">
-                  <h3 class="text-base font-semibold text-slate-100" data-field="name">{report.name}</h3>
-                  <a
-                    href={report.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-slate-500 hover:text-blue-400 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
+      ) : (
+        <div class="space-y-4">
+          {stationReports.map((report) => (
+            <div class="card-base" data-report-id={report.id} data-type="station">
+              <div class="view-mode flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-2">
+                    <h3 class="text-base font-semibold text-slate-100" data-field="name">{report.name}</h3>
+                    <a href={report.url} target="_blank" rel="noopener" class="text-slate-500 hover:text-blue-400"><ExternalLink className="w-4 h-4" /></a>
+                  </div>
+                  <p class="text-sm text-slate-400 mb-3" data-field="description">{report.description}</p>
+                  <div class="flex flex-wrap gap-1.5 mb-3" data-field="models-container">
+                    {(Array.isArray(report.models) ? report.models : []).map(m => <span class="badge-model">{m}</span>)}
+                  </div>
+                  <div class="text-xs text-slate-500">上报时间: <span class="font-mono text-slate-400">{formatDate(report.createdAt)}</span></div>
                 </div>
-                <p class="text-sm text-slate-400 mb-3" data-field="description">{report.description}</p>
-
-                <!-- Models -->
-                <div class="flex flex-wrap gap-1.5 mb-3" data-field="models-container">
-                  {(Array.isArray(report.models) ? report.models : []).map((model) => (
-                    <span class="badge-model">{model}</span>
-                  ))}
-                </div>
-
-                <!-- Meta -->
-                <div class="flex items-center gap-4 text-xs text-slate-500">
-                  <span class="inline-flex items-center gap-1">
-                    <ClipboardList className="w-3.5 h-3.5" />
-                    上报时间: <span class="font-mono text-slate-400">{formatDate(report.createdAt)}</span>
-                  </span>
+                <div class="flex sm:flex-col gap-2 sm:w-32 flex-shrink-0">
+                  <button class="approve-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-sm bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/50 rounded-lg px-3 py-2 font-medium transition-colors"><Check className="w-4 h-4" />批准</button>
+                  <button class="edit-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-sm bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:border-blue-500/50 rounded-lg px-3 py-2 font-medium transition-colors"><Pencil className="w-4 h-4" />编辑</button>
+                  <button class="reject-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 hover:border-red-500/50 rounded-lg px-3 py-2 font-medium transition-colors"><X className="w-4 h-4" />拒绝</button>
                 </div>
               </div>
-
-              <!-- Actions -->
-              <div class="flex sm:flex-col gap-2 sm:w-32 flex-shrink-0">
-                <button
-                  class="approve-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-sm bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/50 rounded-lg px-3 py-2 font-medium transition-colors"
-                >
-                  <Check className="w-4 h-4" />
-                  批准
-                </button>
-                <button
-                  class="edit-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-sm bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:border-blue-500/50 rounded-lg px-3 py-2 font-medium transition-colors"
-                >
-                  <Pencil className="w-4 h-4" />
-                  编辑
-                </button>
-                <button
-                  class="reject-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 hover:border-red-500/50 rounded-lg px-3 py-2 font-medium transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                  拒绝
-                </button>
-              </div>
-            </div>
-
-            <!-- Edit mode (hidden by default) -->
-            <div class="edit-mode hidden">
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-xs text-slate-500 mb-1">站名</label>
-                  <input
-                    type="text"
-                    class="input-base w-full"
-                    data-edit="name"
-                    value={report.name}
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-500 mb-1">官网 URL</label>
-                  <input
-                    type="text"
-                    class="input-base w-full"
-                    data-edit="url"
-                    value={report.url}
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-500 mb-1">简介</label>
-                  <textarea
-                    class="input-base w-full resize-none"
-                    rows="2"
-                    data-edit="description"
-                  >{report.description}</textarea>
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-500 mb-1">支持模型（逗号分隔）</label>
-                  <input
-                    type="text"
-                    class="input-base w-full font-mono"
-                    data-edit="models"
-                    value={(Array.isArray(report.models) ? report.models : []).join(', ')}
-                  />
-                </div>
-                <div class="flex items-center gap-2 pt-2">
-                  <button
-                    class="save-edit-btn inline-flex items-center gap-1.5 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-3 py-1.5 font-medium transition-colors"
-                  >
-                    <Check className="w-3.5 h-3.5" />
-                    保存
-                  </button>
-                  <button
-                    class="cancel-edit-btn inline-flex items-center gap-1.5 text-sm bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 rounded-lg px-3 py-1.5 font-medium transition-colors"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                    取消
-                  </button>
+              <div class="edit-mode hidden">
+                <div class="space-y-4">
+                  <div><label class="block text-xs text-slate-500 mb-1">站名</label><input type="text" class="input-base w-full" data-edit="name" value={report.name} /></div>
+                  <div><label class="block text-xs text-slate-500 mb-1">官网 URL</label><input type="text" class="input-base w-full" data-edit="url" value={report.url} /></div>
+                  <div><label class="block text-xs text-slate-500 mb-1">简介</label><textarea class="input-base w-full resize-none" rows="2" data-edit="description">{report.description}</textarea></div>
+                  <div><label class="block text-xs text-slate-500 mb-1">支持模型（逗号分隔）</label><input type="text" class="input-base w-full font-mono" data-edit="models" value={(Array.isArray(report.models) ? report.models : []).join(', ')} /></div>
+                  <div class="flex gap-2 pt-2">
+                    <button class="save-edit-btn inline-flex items-center gap-1.5 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-3 py-1.5 font-medium"><Check className="w-3.5 h-3.5" />保存</button>
+                    <button class="cancel-edit-btn inline-flex items-center gap-1.5 text-sm border border-slate-700 text-slate-400 rounded-lg px-3 py-1.5 font-medium"><X className="w-3.5 h-3.5" />取消</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-    )}
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- CardShop Reports -->
+    <div id="tab-cardshops" class="tab-content hidden">
+      {cardShopReports.length === 0 ? (
+        <div class="card-base flex flex-col items-center justify-center py-16 text-center">
+          <Inbox className="w-7 h-7 text-slate-600 mb-3" />
+          <h2 class="text-base font-semibold text-slate-300 mb-1">暂无待审核卡网上报</h2>
+          <p class="text-sm text-slate-500">所有卡网上报已处理完毕</p>
+        </div>
+      ) : (
+        <div class="space-y-4">
+          {cardShopReports.map((report) => (
+            <div class="card-base" data-report-id={report.id} data-type="cardshop">
+              <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-2">
+                    <h3 class="text-base font-semibold text-slate-100">{report.name}</h3>
+                    <a href={report.url} target="_blank" rel="noopener" class="text-slate-500 hover:text-blue-400"><ExternalLink className="w-4 h-4" /></a>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-400">{SHOP_TYPE_LABELS[report.shopType] || report.shopType}</span>
+                  </div>
+                  <p class="text-sm text-slate-400 mb-3">{report.description}</p>
+                  {report.platforms && report.platforms.length > 0 && (
+                    <div class="flex flex-wrap gap-1.5 mb-3">
+                      {report.platforms.map(p => <span class="badge-model">{p}</span>)}
+                    </div>
+                  )}
+                  <div class="text-xs text-slate-500">上报时间: <span class="font-mono text-slate-400">{formatDate(report.createdAt)}</span></div>
+                </div>
+                <div class="flex sm:flex-col gap-2 sm:w-32 flex-shrink-0">
+                  <button class="cs-approve-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-sm bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/50 rounded-lg px-3 py-2 font-medium transition-colors"><Check className="w-4 h-4" />批准</button>
+                  <button class="cs-reject-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 hover:border-red-500/50 rounded-lg px-3 py-2 font-medium transition-colors"><X className="w-4 h-4" />拒绝</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   </div>
 </Layout>
 
+<style>
+  .tab-btn { background: transparent; color: #94a3b8; border: 1px solid #334155; }
+  .tab-btn:hover { color: #e2e8f0; border-color: #475569; }
+  .active-tab { background: #1e293b; color: #f1f5f9; border-color: #475569; }
+</style>
+
 <script is:inline>
-  // --- Edit mode toggle ---
-  document.querySelectorAll('.edit-btn').forEach((btn) => {
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+      btn.classList.add('active-tab');
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      document.getElementById('tab-' + btn.getAttribute('data-tab')).classList.remove('hidden');
+    });
+  });
+
+  // --- Station report actions ---
+  function handleStationAction(btn, action) {
+    const card = btn.closest('[data-report-id]');
+    const reportId = card.getAttribute('data-report-id');
+    btn.disabled = true;
+    btn.innerHTML = '处理中...';
+    fetch('/api/admin/reports/' + reportId + '/' + action, { method: 'POST' })
+      .then(res => {
+        if (res.ok) {
+          card.style.transition = 'opacity 0.3s';
+          card.style.opacity = '0';
+          setTimeout(() => { card.remove(); window.location.reload(); }, 300);
+        } else { alert('操作失败'); btn.disabled = false; btn.innerHTML = action === 'approve' ? '批准' : '拒绝'; }
+      })
+      .catch(() => { alert('网络错误'); btn.disabled = false; });
+  }
+
+  document.querySelectorAll('.approve-btn').forEach(btn => btn.addEventListener('click', () => handleStationAction(btn, 'approve')));
+  document.querySelectorAll('.reject-btn').forEach(btn => btn.addEventListener('click', () => handleStationAction(btn, 'reject')));
+
+  // --- CardShop report actions ---
+  function handleCardShopAction(btn, action) {
+    const card = btn.closest('[data-report-id]');
+    const reportId = card.getAttribute('data-report-id');
+    btn.disabled = true;
+    btn.innerHTML = '处理中...';
+    fetch('/api/admin/cardshop-reports/' + reportId + '/' + action, { method: 'POST' })
+      .then(res => {
+        if (res.ok) {
+          card.style.transition = 'opacity 0.3s';
+          card.style.opacity = '0';
+          setTimeout(() => { card.remove(); window.location.reload(); }, 300);
+        } else { alert('操作失败'); btn.disabled = false; btn.innerHTML = action === 'approve' ? '批准' : '拒绝'; }
+      })
+      .catch(() => { alert('网络错误'); btn.disabled = false; });
+  }
+
+  document.querySelectorAll('.cs-approve-btn').forEach(btn => btn.addEventListener('click', () => handleCardShopAction(btn, 'approve')));
+  document.querySelectorAll('.cs-reject-btn').forEach(btn => btn.addEventListener('click', () => handleCardShopAction(btn, 'reject')));
+
+  // --- Station report edit mode ---
+  document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const card = btn.closest('[data-report-id]');
       card.querySelector('.view-mode').classList.add('hidden');
       card.querySelector('.edit-mode').classList.remove('hidden');
     });
   });
-
-  document.querySelectorAll('.cancel-edit-btn').forEach((btn) => {
+  document.querySelectorAll('.cancel-edit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const card = btn.closest('[data-report-id]');
       card.querySelector('.edit-mode').classList.add('hidden');
       card.querySelector('.view-mode').classList.remove('hidden');
     });
   });
-
-  // --- Save edit ---
-  document.querySelectorAll('.save-edit-btn').forEach((btn) => {
+  document.querySelectorAll('.save-edit-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const card = btn.closest('[data-report-id]');
       const reportId = card.getAttribute('data-report-id');
-
       const name = card.querySelector('[data-edit="name"]').value.trim();
       const url = card.querySelector('[data-edit="url"]').value.trim();
       const description = card.querySelector('[data-edit="description"]').value.trim();
       const models = card.querySelector('[data-edit="models"]').value.trim();
-
-      if (!name || !url || !description) {
-        alert('站名、URL、简介不能为空');
-        return;
-      }
-
-      btn.disabled = true;
-      const originalContent = btn.innerHTML;
-      btn.innerHTML = '保存中...';
-
+      if (!name || !url) { alert('站名和URL不能为空'); return; }
+      btn.disabled = true; btn.innerHTML = '保存中...';
       try {
         const res = await fetch('/api/admin/reports/' + reportId + '/edit', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, url, description, models }),
         });
-
         if (res.ok) {
-          const data = await res.json();
-          const report = data.report;
-
-          // Update view mode display
-          card.querySelector('[data-field="name"]').textContent = report.name;
-          card.querySelector('[data-field="description"]').textContent = report.description;
-
-          // Update models
-          const modelsContainer = card.querySelector('[data-field="models-container"]');
-          modelsContainer.innerHTML = '';
-          (report.models || []).forEach(function(model) {
-            const span = document.createElement('span');
-            span.className = 'badge-model';
-            span.textContent = model;
-            modelsContainer.appendChild(span);
+          card.querySelector('[data-field="name"]').textContent = name;
+          card.querySelector('[data-field="description"]').textContent = description;
+          const mc = card.querySelector('[data-field="models-container"]');
+          mc.innerHTML = '';
+          models.split(',').map(s => s.trim()).filter(Boolean).forEach(m => {
+            const s = document.createElement('span'); s.className = 'badge-model'; s.textContent = m; mc.appendChild(s);
           });
-
-          // Update URL link
-          const link = card.querySelector('.view-mode a[href]');
-          if (link) link.href = report.url;
-
-          // Update edit inputs
-          card.querySelector('[data-edit="name"]').value = report.name;
-          card.querySelector('[data-edit="url"]').value = report.url;
-          card.querySelector('[data-edit="description"]').value = report.description;
-          card.querySelector('[data-edit="models"]').value = (report.models || []).join(', ');
-
-          // Switch back to view mode
           card.querySelector('.edit-mode').classList.add('hidden');
           card.querySelector('.view-mode').classList.remove('hidden');
-
-          // Flash green border
-          card.style.borderColor = '#10b981';
-          setTimeout(function() { card.style.borderColor = ''; }, 1500);
-        } else {
-          alert('保存失败，请重试');
-        }
-      } catch (err) {
-        alert('网络错误，请稍后重试');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalContent;
-      }
+        } else { alert('保存失败'); }
+      } catch { alert('网络错误'); }
+      finally { btn.disabled = false; btn.innerHTML = '保存'; }
     });
-  });
-
-  // --- Approve / Reject ---
-  function handleAction(btn, action) {
-    const card = btn.closest('[data-report-id]');
-    const reportId = card.getAttribute('data-report-id');
-    const isApprove = action === 'approve';
-
-    btn.disabled = true;
-    const originalContent = btn.innerHTML;
-    btn.innerHTML = '处理中...';
-
-    fetch('/api/admin/reports/' + reportId + '/' + action, {
-      method: 'POST',
-    })
-      .then((res) => {
-        if (res.ok) {
-          card.style.transition = 'opacity 0.3s, transform 0.3s';
-          card.style.opacity = '0';
-          card.style.transform = 'translateX(-20px)';
-          setTimeout(() => {
-            card.remove();
-            const remaining = document.querySelectorAll('[data-report-id]');
-            if (remaining.length === 0) {
-              window.location.reload();
-            }
-          }, 300);
-        } else {
-          alert('操作失败，请重试');
-          btn.disabled = false;
-          btn.innerHTML = originalContent;
-        }
-      })
-      .catch(() => {
-        alert('网络错误，请稍后重试');
-        btn.disabled = false;
-        btn.innerHTML = originalContent;
-      });
-  }
-
-  document.querySelectorAll('.approve-btn').forEach((btn) => {
-    btn.addEventListener('click', () => handleAction(btn, 'approve'));
-  });
-
-  document.querySelectorAll('.reject-btn').forEach((btn) => {
-    btn.addEventListener('click', () => handleAction(btn, 'reject'));
   });
 </script>

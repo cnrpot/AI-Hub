@@ -1,0 +1,138 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Send, ArrowLeft } from 'lucide-react';
+---
+
+<Layout title="上报卡网 — AI Hub">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <a href="/" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-100 transition-colors mb-6">
+      <ArrowLeft className="w-4 h-4" />
+      返回首页
+    </a>
+
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-slate-100 mb-2">上报卡网</h1>
+      <p class="text-slate-400 text-sm">提交 AI 订阅卡网渠道信息，经管理员审核后收录到平台。</p>
+    </div>
+
+    <div class="card-base">
+      <form id="report-form" class="space-y-5">
+        <div>
+          <label for="name" class="block text-sm font-medium text-slate-300 mb-1.5">卡网名称 <span class="text-red-400">*</span></label>
+          <input type="text" id="name" name="name" required placeholder="例如：某某卡网" class="input-base w-full" />
+        </div>
+
+        <div>
+          <label for="url" class="block text-sm font-medium text-slate-300 mb-1.5">网址 <span class="text-red-400">*</span></label>
+          <input type="url" id="url" name="url" required placeholder="https://example.com" class="input-base w-full" />
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-medium text-slate-300 mb-1.5">简介</label>
+          <textarea id="description" name="description" rows="3" placeholder="简要描述该卡网..." class="input-base w-full resize-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="shopType" class="block text-sm font-medium text-slate-300 mb-1.5">类型</label>
+            <select id="shopType" name="shopType" class="input-base w-full">
+              <option value="kami">卡密自动发货</option>
+              <option value="dujiao">独角数卡</option>
+              <option value="shopApi">链动小铺</option>
+              <option value="genericHtml">通用商城</option>
+              <option value="other" selected>其他</option>
+            </select>
+          </div>
+          <div>
+            <label for="platforms" class="block text-sm font-medium text-slate-300 mb-1.5">支持平台</label>
+            <input type="text" id="platforms" name="platforms" placeholder="ChatGPT, Claude, Gemini" class="input-base w-full" />
+            <p class="text-xs text-slate-500 mt-1.5">多个平台用英文逗号分隔</p>
+          </div>
+        </div>
+
+        <div>
+          <label for="contact" class="block text-sm font-medium text-slate-300 mb-1.5">联系方式 <span class="text-slate-500 text-xs font-normal">（可选）</span></label>
+          <input type="text" id="contact" name="contact" placeholder="邮箱、Telegram、微信等" class="input-base w-full" />
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button type="submit" id="submit-btn" class="btn-primary">
+            <Send className="w-4 h-4" />
+            提交上报
+          </button>
+          <a href="/" class="btn-ghost">取消</a>
+        </div>
+      </form>
+
+      <div id="message" class="hidden mt-5 p-4 rounded-lg text-sm"></div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById('report-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const messageDiv = document.getElementById('message');
+
+  if (form && submitBtn && messageDiv) {
+    const originalBtnHTML = submitBtn.innerHTML;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById('name').value.trim(),
+        url: document.getElementById('url').value.trim(),
+        description: document.getElementById('description').value.trim(),
+        shopType: document.getElementById('shopType').value,
+        platforms: document.getElementById('platforms').value.trim(),
+        contact: document.getElementById('contact').value.trim() || undefined,
+      };
+
+      if (!data.name || !data.url) {
+        showMessage('请填写卡网名称和网址', false);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> 提交中...';
+      hideMessage();
+
+      try {
+        const res = await fetch('/api/report-cardshop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          showMessage(result.message, true);
+          form.reset();
+        } else {
+          showMessage(result.message || '提交失败', false);
+        }
+      } catch {
+        showMessage('网络错误，提交失败', false);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHTML;
+      }
+    });
+  }
+
+  function showMessage(text, success) {
+    if (!messageDiv) return;
+    messageDiv.textContent = text;
+    messageDiv.className = 'mt-5 p-4 rounded-lg text-sm border ' + (
+      success ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+              : 'bg-red-500/10 text-red-400 border-red-500/20'
+    );
+  }
+
+  function hideMessage() {
+    if (!messageDiv) return;
+    messageDiv.className = 'hidden mt-5 p-4 rounded-lg text-sm';
+    messageDiv.textContent = '';
+  }
+</script>

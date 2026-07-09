@@ -28,6 +28,23 @@ export interface Report {
   url: string;
   description: string;
   models: string[];
+  contact?: string;
   status: ReportStatus;
+  createdAt: string;
+}
+
+/* ---- CardShop Report ---- */
+
+export type CardShopReportStatus = 'pending' | 'approved' | 'rejected';
+
+export interface CardShopReport {
+  id: string;
+  name: string;
+  url: string;
+  description: string;
+  shopType: string;
+  platforms: string[];
+  contact?: string;
+  status: CardShopReportStatus;
   createdAt: string;
 }
