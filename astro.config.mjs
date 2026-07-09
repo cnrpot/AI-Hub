@@ -9,4 +9,6 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [react(), tailwind(), sitemap()],
+  // Disable built-in CSRF check — admin routes use session cookie auth
+  checkOrigin: false,
 });
