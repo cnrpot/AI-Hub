@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { approveCardShopReport } from '../../../../server/db';
+import { approveCardShopReport } from '../../../../../server/db';
 
 export const POST: APIRoute = async ({ params }) => {
   const id = params.id!;
