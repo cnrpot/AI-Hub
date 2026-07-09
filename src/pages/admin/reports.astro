@@ -166,7 +166,7 @@ const SHOP_TYPE_LABELS: Record<string, string> = {
     const reportId = card.getAttribute('data-report-id');
     btn.disabled = true;
     btn.innerHTML = '处理中...';
-    fetch('/api/admin/reports/' + reportId + '/' + action, { method: 'POST' })
+    fetch('/api/admin/reports/' + reportId + '/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
       .then(res => {
         if (res.ok) {
           card.style.transition = 'opacity 0.3s';
@@ -186,7 +186,7 @@ const SHOP_TYPE_LABELS: Record<string, string> = {
     const reportId = card.getAttribute('data-report-id');
     btn.disabled = true;
     btn.innerHTML = '处理中...';
-    fetch('/api/admin/cardshop-reports/' + reportId + '/' + action, { method: 'POST' })
+    fetch('/api/admin/cardshop-reports/' + reportId + '/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
       .then(res => {
         if (res.ok) {
           card.style.transition = 'opacity 0.3s';
