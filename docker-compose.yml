@@ -14,3 +14,4 @@ services:
       - NODE_ENV=production
       - PORT=4321
       - HOST=0.0.0.0
+      - SITE_URL=http://8.152.211.211:4321
