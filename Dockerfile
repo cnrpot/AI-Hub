@@ -32,6 +32,9 @@ COPY --from=builder /app/package.json ./package.json
 # Copy server wrapper for diagnostics (from builder)
 COPY --from=builder /app/server-wrapper.mjs ./server-wrapper.mjs
 
+# Copy scripts directory for background monitoring
+COPY --from=builder /app/scripts ./scripts
+
 # Environment defaults
 ENV NODE_ENV=production
 ENV PORT=4321

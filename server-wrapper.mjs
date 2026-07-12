@@ -2,6 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
+import { fork } from 'node:child_process';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const CLIENT_DIR = path.join(__dirname, 'dist', 'client');
@@ -80,3 +81,32 @@ console.log('[STATIC] Custom static handler active — serving from', CLIENT_DIR
 
 // Import entry.mjs — triggers server start with our patched createServer
 await import('./dist/server/entry.mjs');
+
+// --- Background Tasks (Cron) ---
+function startBackgroundMonitors() {
+  const ONE_HOUR = 60 * 60 * 1000;
+  
+  function runMonitor() {
+    console.log('[CRON] Starting cardshop monitor...');
+    const child = fork(path.join(__dirname, 'scripts', 'monitor-cardshops.mjs'));
+    child.on('error', err => console.error('[CRON] Cardshop monitor error:', err));
+  }
+  
+  function runPricing() {
+    console.log('[CRON] Starting pricing updater...');
+    const child = fork(path.join(__dirname, 'scripts', 'update-stations-pricing.mjs'));
+    child.on('error', err => console.error('[CRON] Pricing updater error:', err));
+  }
+
+  // Initial delay so server boots up first, then run them
+  setTimeout(() => {
+    runMonitor();
+    runPricing();
+  }, 10000);
+
+  // Set periodic intervals
+  setInterval(runMonitor, ONE_HOUR); // every 1 hour
+  setInterval(runPricing, ONE_HOUR * 12); // every 12 hours
+}
+
+startBackgroundMonitors();
