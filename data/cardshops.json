@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "测试发卡网",
+    "url": "https://priceai.cc",
+    "description": "用于测试监控脚本的示例",
+    "shopType": "dujiao",
+    "products": [],
+    "platforms": [
+      "OpenAI",
+      "Claude"
+    ],
+    "productCount": 0,
+    "inStockCount": 0,
+    "lowestPrice": null,
+    "healthStatus": "healthy",
+    "updatedAt": "2026-07-12T04:39:40.572Z"
+  }
+]
